@@ -1,0 +1,105 @@
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition: all var(--transition-base);
+  animation: fadeIn var(--transition-base) forwards;
+}
+
+.card:hover {
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+}
+
+.title {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xs);
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.trendUp {
+  color: var(--accent-primary);
+}
+
+.trendDown {
+  color: var(--accent-danger);
+}
+
+.trendLabel {
+  color: var(--text-muted);
+}
+
+/* Variants */
+.success .icon {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--accent-primary);
+}
+
+.success .value {
+  color: var(--accent-primary);
+}
+
+.warning .icon {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--accent-warning);
+}
+
+.warning .value {
+  color: var(--accent-warning);
+}
+
+.danger .icon {
+  background: rgba(255, 68, 102, 0.1);
+  color: var(--accent-danger);
+}
+
+.danger .value {
+  color: var(--accent-danger);
+}
+
+.info .icon {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--accent-secondary);
+}
+
+.info .value {
+  color: var(--accent-secondary);
+}
+
+

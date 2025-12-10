@@ -1,0 +1,212 @@
+.tableWrapper {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+}
+
+.table th {
+  background: var(--bg-tertiary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table td {
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.row {
+  animation: fadeIn var(--transition-base) both;
+  transition: background var(--transition-fast);
+}
+
+.row:hover {
+  background: var(--bg-hover);
+}
+
+.row:last-child td {
+  border-bottom: none;
+}
+
+.userId {
+  font-weight: 500;
+  color: var(--accent-secondary);
+  font-size: 0.875rem;
+}
+
+.date {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.time {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.analyst {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.days {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+.daysWarning {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--accent-warning);
+}
+
+.daysDanger {
+  background: rgba(255, 68, 102, 0.1);
+  color: var(--accent-danger);
+}
+
+.status {
+  display: inline-flex;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status.active {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--status-active);
+}
+
+.status.blocked {
+  background: rgba(255, 68, 102, 0.1);
+  color: var(--status-blocked);
+}
+
+.status.pending {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--status-pending);
+}
+
+.status.suspended {
+  background: rgba(255, 102, 68, 0.1);
+  color: var(--status-suspended);
+}
+
+.status.inactive {
+  background: var(--bg-elevated);
+  color: var(--status-inactive);
+}
+
+.highValue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 68, 102, 0.1));
+  color: var(--accent-warning);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+}
+
+.normalValue {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.actionBtn:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  color: var(--text-muted);
+  gap: var(--space-md);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty h3 {
+  margin-top: var(--space-md);
+  color: var(--text-secondary);
+}
+
+.empty p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
