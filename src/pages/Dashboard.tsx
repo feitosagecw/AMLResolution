@@ -91,119 +91,122 @@ export function Dashboard() {
   }
 
   return (
-    <div className={styles.dashboard}>
-      <header className={styles.header}>
-        <div>
-          <h1>Dashboard</h1>
-          <p>Visão geral dos casos de AML pendentes de resolução</p>
-        </div>
-        <div className={styles.headerActions}>
-          {cached && (
-            <span className={styles.cacheInfo}>
-              <Clock size={14} />
-              Cache: {formatCacheAge(cacheAge)}
-            </span>
-          )}
-          <button 
-            onClick={refresh} 
-            className={styles.refreshBtn}
-            disabled={loading}
-            title="Atualizar dados do BigQuery"
-          >
-            <RefreshCw size={18} className={loading ? styles.spinning : ''} />
-            Atualizar
-          </button>
-          <Link to="/cases" className={styles.viewAllBtn}>
-            <FileSearch size={18} />
-            Ver Todos os Casos
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-      </header>
-
-      <div className={styles.statsGrid}>
-        <StatCard
-          title="Total de Casos"
-          value={loading ? '...' : stats?.total ?? 0}
-          icon={<AlertTriangle size={20} />}
-          variant="info"
-        />
-        <StatCard
-          title="Pendentes"
-          value={loading ? '...' : stats?.pending ?? 0}
-          icon={<Clock size={20} />}
-          variant="warning"
-        />
-        <StatCard
-          title="Resolvidos"
-          value={loading ? '...' : stats?.resolved ?? 0}
-          icon={<CheckCircle2 size={20} />}
-          variant="success"
-        />
-        <StatCard
-          title="Alto Valor"
-          value={loading ? '...' : stats?.high_value_count ?? 0}
-          icon={<TrendingUp size={20} />}
-          variant="danger"
-        />
-      </div>
-
-      {/* Gráficos */}
-      {cases.length > 0 && (
-        <div className={styles.chartsGrid}>
-          <BarChart 
-            title="📊 Casos por Analista" 
-            data={analystData}
-            maxItems={8}
-          />
-          <DonutChart 
-            title="💰 Distribuição por Valor" 
-            data={highValueData}
-          />
-          <StatusChart 
-            title="📋 Status dos Usuários" 
-            data={statusData}
-          />
-        </div>
-      )}
-
-      <div className={styles.sections}>
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>🔥 Alta Prioridade</h2>
-            <span className={styles.badge}>{highPriorityCases.length} casos</span>
+    <>
+      <div className={styles.backgroundPattern} />
+      <div className={styles.dashboard}>
+        <header className={styles.header}>
+          <div>
+            <h1>Dashboard</h1>
+            <p>Visão geral dos casos de AML pendentes de resolução</p>
           </div>
-          <p className={styles.sectionDesc}>
-            Casos com alto valor ou pendentes há mais de 45 dias
-          </p>
-          <CaseTable cases={highPriorityCases} loading={loading} />
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>📋 Casos Recentes</h2>
-            <Link to="/cases" className={styles.sectionLink}>
-              Ver todos <ArrowRight size={14} />
+          <div className={styles.headerActions}>
+            {cached && (
+              <span className={styles.cacheInfo}>
+                <Clock size={14} />
+                Cache: {formatCacheAge(cacheAge)}
+              </span>
+            )}
+            <button 
+              onClick={refresh} 
+              className={styles.refreshBtn}
+              disabled={loading}
+              title="Atualizar dados do BigQuery"
+            >
+              <RefreshCw size={18} className={loading ? styles.spinning : ''} />
+              Atualizar
+            </button>
+            <Link to="/cases" className={styles.viewAllBtn}>
+              <FileSearch size={18} />
+              Ver Todos os Casos
+              <ArrowRight size={16} />
             </Link>
           </div>
-          <p className={styles.sectionDesc}>
-            Últimos casos criados no sistema
-          </p>
-          <CaseTable cases={recentCases} loading={loading} />
-        </section>
-      </div>
+        </header>
 
-      {stats && (
-        <div className={styles.avgDays}>
-          <div className={styles.avgDaysContent}>
-            <Clock size={24} />
-            <div>
-              <span className={styles.avgDaysValue}>{stats.avg_days_pending} dias</span>
-              <span className={styles.avgDaysLabel}>tempo médio de pendência</span>
+        <div className={styles.statsGrid}>
+          <StatCard
+            title="Total de Casos"
+            value={loading ? '...' : stats?.total ?? 0}
+            icon={<AlertTriangle size={20} />}
+            variant="info"
+          />
+          <StatCard
+            title="Pendentes"
+            value={loading ? '...' : stats?.pending ?? 0}
+            icon={<Clock size={20} />}
+            variant="warning"
+          />
+          <StatCard
+            title="Resolvidos"
+            value={loading ? '...' : stats?.resolved ?? 0}
+            icon={<CheckCircle2 size={20} />}
+            variant="success"
+          />
+          <StatCard
+            title="Alto Valor"
+            value={loading ? '...' : stats?.high_value_count ?? 0}
+            icon={<TrendingUp size={20} />}
+            variant="danger"
+          />
+        </div>
+
+        {/* Gráficos */}
+        {cases.length > 0 && (
+          <div className={styles.chartsGrid}>
+            <BarChart 
+              title="📊 Casos por Analista" 
+              data={analystData}
+              maxItems={8}
+            />
+            <DonutChart 
+              title="💰 Distribuição por Valor" 
+              data={highValueData}
+            />
+            <StatusChart 
+              title="📋 Status dos Usuários" 
+              data={statusData}
+            />
+          </div>
+        )}
+
+        <div className={styles.sections}>
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2>🔥 Alta Prioridade</h2>
+              <span className={styles.badge}>{highPriorityCases.length} casos</span>
+            </div>
+            <p className={styles.sectionDesc}>
+              Casos com alto valor ou pendentes há mais de 45 dias
+            </p>
+            <CaseTable cases={highPriorityCases} loading={loading} />
+          </section>
+
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2>📋 Casos Recentes</h2>
+              <Link to="/cases" className={styles.sectionLink}>
+                Ver todos <ArrowRight size={14} />
+              </Link>
+            </div>
+            <p className={styles.sectionDesc}>
+              Últimos casos criados no sistema
+            </p>
+            <CaseTable cases={recentCases} loading={loading} />
+          </section>
+        </div>
+
+        {stats && (
+          <div className={styles.avgDays}>
+            <div className={styles.avgDaysContent}>
+              <Clock size={24} />
+              <div>
+                <span className={styles.avgDaysValue}>{stats.avg_days_pending} dias</span>
+                <span className={styles.avgDaysLabel}>tempo médio de pendência</span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   )
 }

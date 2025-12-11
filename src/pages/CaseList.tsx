@@ -92,46 +92,49 @@ export function CaseList() {
   }
 
   return (
-    <div className={styles.caseList}>
-      <header className={styles.header}>
-        <div className={styles.headerIcon}>
-          <FileSearch size={28} />
-        </div>
-        <div className={styles.headerInfo}>
-          <h1>Casos Pendentes</h1>
-          <p>
-            {loading 
-              ? 'Carregando casos...'
-              : `${filteredCases.length} caso${filteredCases.length !== 1 ? 's' : ''} encontrado${filteredCases.length !== 1 ? 's' : ''}`
-            }
-          </p>
-        </div>
-        <div className={styles.headerActions}>
-          {cached && (
-            <span className={styles.cacheInfo}>
-              <Clock size={14} />
-              Atualizado {formatCacheAge(cacheAge)}
-            </span>
-          )}
-          <button 
-            onClick={refresh} 
-            className={styles.refreshBtn}
-            disabled={loading}
-            title="Atualizar dados do BigQuery"
-          >
-            <RefreshCw size={18} className={loading ? styles.spinning : ''} />
-            Atualizar
-          </button>
-        </div>
-      </header>
+    <>
+      <div className={styles.backgroundPattern} />
+      <div className={styles.caseList}>
+        <header className={styles.header}>
+          <div className={styles.headerIcon}>
+            <FileSearch size={28} />
+          </div>
+          <div className={styles.headerInfo}>
+            <h1>Casos Pendentes</h1>
+            <p>
+              {loading 
+                ? 'Carregando casos...'
+                : `${filteredCases.length} caso${filteredCases.length !== 1 ? 's' : ''} encontrado${filteredCases.length !== 1 ? 's' : ''}`
+              }
+            </p>
+          </div>
+          <div className={styles.headerActions}>
+            {cached && (
+              <span className={styles.cacheInfo}>
+                <Clock size={14} />
+                Atualizado {formatCacheAge(cacheAge)}
+              </span>
+            )}
+            <button 
+              onClick={refresh} 
+              className={styles.refreshBtn}
+              disabled={loading}
+              title="Atualizar dados do BigQuery"
+            >
+              <RefreshCw size={18} className={loading ? styles.spinning : ''} />
+              Atualizar
+            </button>
+          </div>
+        </header>
 
-      <SearchFilters 
-        filters={filters} 
-        onFiltersChange={setFilters}
-        analysts={analysts}
-      />
+        <SearchFilters 
+          filters={filters} 
+          onFiltersChange={setFilters}
+          analysts={analysts}
+        />
 
-      <CaseTable cases={filteredCases} loading={loading} />
-    </div>
+        <CaseTable cases={filteredCases} loading={loading} />
+      </div>
+    </>
   )
 }

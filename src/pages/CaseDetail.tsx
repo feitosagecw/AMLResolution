@@ -115,15 +115,17 @@ export function CaseDetail() {
   }
 
   return (
-    <div className={styles.caseDetail}>
-      <header className={styles.header}>
-        <button onClick={() => navigate(-1)} className={styles.backBtn}>
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1>Caso #{caseData.user_id}</h1>
-          <p>Análise e resolução do caso</p>
-        </div>
+    <>
+      <div className={styles.backgroundPattern} />
+      <div className={styles.caseDetail}>
+        <header className={styles.header}>
+          <button onClick={() => navigate(-1)} className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1>Caso #{caseData.user_id}</h1>
+            <p>Análise e resolução do caso</p>
+          </div>
         {caseData.high_value === 'yes' && (
           <span className={styles.highValueBadge}>
             <TrendingUp size={16} />
@@ -534,6 +536,7 @@ export function CaseDetail() {
           </div>
         </aside>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
