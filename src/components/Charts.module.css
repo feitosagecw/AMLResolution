@@ -2,12 +2,13 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-xl);
   animation: fadeIn var(--transition-base) forwards;
+  min-height: 320px;
 }
 
 .chartTitle {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-lg);
@@ -20,37 +21,39 @@
 .barChart {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .barRow {
   display: grid;
-  grid-template-columns: 120px 1fr 40px;
+  grid-template-columns: minmax(200px, 1fr) 1fr 60px;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .barLabel {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .barTrack {
-  height: 24px;
+  height: 32px;
   background: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   overflow: hidden;
+  border: 1px solid var(--border-subtle);
 }
 
 .barFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  border-radius: var(--radius-sm);
-  animation: growBar 0.6s ease-out forwards;
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  border-radius: var(--radius-md);
+  animation: growBar 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   transform-origin: left;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+  min-width: 8px;
 }
 
 @keyframes growBar {
@@ -63,35 +66,39 @@
 }
 
 .barValue {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   font-family: var(--font-mono);
-  color: var(--text-primary);
+  color: var(--accent-primary);
   text-align: right;
+  min-width: 40px;
 }
 
 /* Donut Chart */
 .donutContainer {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
+  justify-content: center;
+  gap: var(--space-2xl);
   flex-wrap: wrap;
+  padding: var(--space-lg) 0;
 }
 
 .donutChart {
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   flex-shrink: 0;
 }
 
 .donutHole {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   background: var(--bg-secondary);
   border-radius: 50%;
   display: flex;
@@ -101,14 +108,14 @@
 }
 
 .donutTotal {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--text-primary);
 }
 
 .donutLabel {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -117,9 +124,9 @@
 .donutLegend {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   flex: 1;
-  min-width: 150px;
+  min-width: 180px;
 }
 
 .legendItem {

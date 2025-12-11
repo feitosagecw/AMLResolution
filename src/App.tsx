@@ -38,7 +38,7 @@ function AppRoutes() {
     <Routes>
       <Route 
         path="/login" 
-        element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} 
+        element={isAuthenticated ? <Navigate to="/cases" replace /> : <Login />} 
       />
       <Route 
         path="/" 
@@ -48,7 +48,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<CaseList />} />
+        <Route index element={<Navigate to="/cases" replace />} />
+        <Route path="cases" element={<CaseList />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="cases/:userId" element={<CaseDetail />} />
       </Route>

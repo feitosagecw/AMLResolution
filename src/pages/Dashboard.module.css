@@ -131,9 +131,15 @@
 
 .chartsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-xl);
   margin-bottom: var(--space-2xl);
+}
+
+@media (max-width: 1100px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sections {

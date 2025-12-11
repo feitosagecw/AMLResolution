@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { StatCard } from '../components/StatCard'
 import { CaseTable } from '../components/CaseTable'
-import { BarChart, DonutChart, StatusChart, LineChart } from '../components/Charts'
+import { BarChart, DonutChart, LineChart } from '../components/Charts'
 import { useCasesContext } from '../contexts/CasesContext'
 import styles from './Dashboard.module.css'
 
@@ -55,14 +55,6 @@ export function Dashboard() {
     ]
   }, [cases])
 
-  // Dados para gráfico de status
-  const statusData = useMemo(() => {
-    const counts: Record<string, number> = {}
-    cases.forEach(c => {
-      counts[c.status] = (counts[c.status] || 0) + 1
-    })
-    return Object.entries(counts).map(([status, count]) => ({ status, count }))
-  }, [cases])
 
   // Dados para gráfico de linha (alertas por data)
   const alertsByDateData = useMemo(() => {
@@ -140,7 +132,7 @@ export function Dashboard() {
               <RefreshCw size={18} className={loading ? styles.spinning : ''} />
               Atualizar
             </button>
-            <Link to="/" className={styles.viewAllBtn}>
+            <Link to="/cases" className={styles.viewAllBtn}>
               <FileSearch size={18} />
               Ver Todos os Casos
               <ArrowRight size={16} />
@@ -167,17 +159,13 @@ export function Dashboard() {
         {cases.length > 0 && (
           <div className={styles.chartsGrid}>
             <BarChart 
-              title="📊 Casos por Analista" 
+              title="📊 Casos por Alerta" 
               data={analystData}
               maxItems={8}
             />
             <DonutChart 
               title="💰 Distribuição por Valor" 
               data={highValueData}
-            />
-            <StatusChart 
-              title="📋 Status dos Usuários" 
-              data={statusData}
             />
           </div>
         )}
@@ -207,7 +195,7 @@ export function Dashboard() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2>📋 Casos Recentes</h2>
-              <Link to="/" className={styles.sectionLink}>
+              <Link to="/cases" className={styles.sectionLink}>
                 Ver todos <ArrowRight size={14} />
               </Link>
             </div>

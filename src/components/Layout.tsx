@@ -31,8 +31,7 @@ export function Layout() {
         
         <nav className={styles.nav}>
           <NavLink 
-            to="/" 
-            end
+            to="/cases" 
             className={({ isActive }) => 
               `${styles.navLink} ${isActive ? styles.active : ''}`
             }
