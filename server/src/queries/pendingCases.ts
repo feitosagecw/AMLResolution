@@ -7,6 +7,9 @@
  * - Têm prioridade low
  * - Não são do tenant 2
  * - São a análise mais recente do usuário
+ * 
+ * IMPORTANTE: O status retornado é do USUÁRIO do caso (case_user),
+ * não do analista que fez a análise.
  */
 export const PENDING_CASES_QUERY = `
 WITH SelectedUsers AS (
@@ -15,15 +18,18 @@ WITH SelectedUsers AS (
     an.created_at,
     INITCAP(
       REPLACE(
-        REPLACE(SPLIT(u.email, '@')[OFFSET(0)], '_', ' '),
+        REPLACE(SPLIT(analyst.email, '@')[OFFSET(0)], '_', ' '),
         '.', ' '
       )
     ) AS analyst,
     DATE_DIFF(CURRENT_DATE(), DATE(an.created_at), DAY) AS days_since_creation,
-    u.status
+    case_user.status,
+    case_user.status_reason
   FROM \`infinitepay-production.maindb.offense_analyses\` an
-  JOIN \`infinitepay-production.maindb.users\` u
-    ON u.id = an.analyst_id
+  JOIN \`infinitepay-production.maindb.users\` analyst
+    ON analyst.id = an.analyst_id
+  JOIN \`infinitepay-production.maindb.users\` case_user
+    ON case_user.id = an.user_id
   JOIN \`infinitepay-production.maindb.offenses\` o
     ON o.id = an.offense_id
   LEFT JOIN \`infinitepay-production.maindb.offense_actions\` act
@@ -76,6 +82,7 @@ SELECT
   su.analyst,
   su.days_since_creation,
   su.status,
+  su.status_reason,
   CASE
     WHEN COALESCE(ts90.TransactionTotalAmount90, 0) >= 500000
       OR COALESCE(ts.TransactionTotalAmount,   0) >= 1500000
@@ -90,6 +97,9 @@ ORDER BY su.created_at DESC
 
 /**
  * Query para buscar um caso específico por user_id
+ * 
+ * IMPORTANTE: O status retornado é do USUÁRIO do caso (case_user),
+ * não do analista que fez a análise.
  */
 export const CASE_BY_USER_ID_QUERY = `
 WITH UserCase AS (
@@ -98,15 +108,18 @@ WITH UserCase AS (
     an.created_at,
     INITCAP(
       REPLACE(
-        REPLACE(SPLIT(u.email, '@')[OFFSET(0)], '_', ' '),
+        REPLACE(SPLIT(analyst.email, '@')[OFFSET(0)], '_', ' '),
         '.', ' '
       )
     ) AS analyst,
     DATE_DIFF(CURRENT_DATE(), DATE(an.created_at), DAY) AS days_since_creation,
-    u.status
+    case_user.status,
+    case_user.status_reason
   FROM \`infinitepay-production.maindb.offense_analyses\` an
-  JOIN \`infinitepay-production.maindb.users\` u
-    ON u.id = an.analyst_id
+  JOIN \`infinitepay-production.maindb.users\` analyst
+    ON analyst.id = an.analyst_id
+  JOIN \`infinitepay-production.maindb.users\` case_user
+    ON case_user.id = an.user_id
   JOIN \`infinitepay-production.maindb.offenses\` o
     ON o.id = an.offense_id
   WHERE
@@ -146,6 +159,7 @@ SELECT
   uc.analyst,
   uc.days_since_creation,
   uc.status,
+  uc.status_reason,
   CASE
     WHEN COALESCE(ts90.TransactionTotalAmount90, 0) >= 500000
       OR COALESCE(ts.TransactionTotalAmount,   0) >= 1500000

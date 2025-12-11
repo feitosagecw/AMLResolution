@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Eye, AlertTriangle, TrendingUp } from 'lucide-react'
+import { Eye, AlertTriangle, TrendingUp, ShieldAlert } from 'lucide-react'
 import type { AMLCase } from '../types/case'
 import styles from './CaseTable.module.css'
 import clsx from 'clsx'
@@ -80,9 +80,17 @@ export function CaseTable({ cases, loading }: CaseTableProps) {
                 </span>
               </td>
               <td>
-                <span className={clsx(styles.status, styles[caseItem.status])}>
-                  {caseItem.status}
-                </span>
+                <div className={styles.statusCell}>
+                  <span className={clsx(styles.status, styles[caseItem.status])}>
+                    {caseItem.status === 'blocked' && <ShieldAlert size={12} />}
+                    {caseItem.status}
+                  </span>
+                  {caseItem.status === 'blocked' && caseItem.status_reason && (
+                    <span className={styles.statusReason} title={caseItem.status_reason}>
+                      {caseItem.status_reason}
+                    </span>
+                  )}
+                </div>
               </td>
               <td>
                 {caseItem.high_value === 'yes' ? (

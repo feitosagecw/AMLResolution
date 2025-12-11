@@ -30,6 +30,7 @@ export interface AMLCase {
   analyst: string;
   days_since_creation: number;
   status: UserStatus;
+  status_reason: string | null;
   high_value: HighValue;
   resolution_status?: ResolutionStatus;
   resolution_notes?: string;
