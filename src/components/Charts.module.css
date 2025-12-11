@@ -207,4 +207,143 @@
   color: var(--text-muted);
 }
 
+/* Line Chart */
+.lineChartCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+}
+
+.lineChartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+.lineChartStats {
+  display: flex;
+  gap: var(--space-xl);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+}
+
+.statLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lineChartContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  height: 300px;
+  padding: var(--space-lg) 0;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.lineBarWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.lineBarContainer {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.lineBar {
+  width: 80%;
+  max-width: 50px;
+  background: linear-gradient(180deg, var(--accent-primary) 0%, rgba(0, 255, 136, 0.6) 100%);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.lineBar:hover {
+  transform: scaleY(1.02);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+  filter: brightness(1.1);
+}
+
+.lineBarMax {
+  background: linear-gradient(180deg, #00ff88 0%, #00cc6a 100%);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+}
+
+.lineBarMin {
+  background: linear-gradient(180deg, var(--accent-secondary) 0%, rgba(0, 212, 255, 0.6) 100%);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.lineBarValue {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.lineBar:hover .lineBarValue {
+  opacity: 1;
+}
+
+.lineBarLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.emptyChart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
 

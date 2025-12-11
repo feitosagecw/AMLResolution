@@ -1,20 +1,29 @@
+import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, FileSearch, Shield, LogOut } from 'lucide-react'
+import { LayoutDashboard, FileSearch, Shield, LogOut, PanelLeftClose, PanelLeft } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './Layout.module.css'
 
 export function Layout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed)
+  }
+
   return (
-    <div className={styles.layout}>
-      <aside className={styles.sidebar}>
+    <div className={`${styles.layout} ${sidebarCollapsed ? styles.collapsed : ''}`}>
+      <button className={styles.toggleBtn} onClick={toggleSidebar} title={sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}>
+        {sidebarCollapsed ? <PanelLeft size={20} /> : <PanelLeftClose size={20} />}
+      </button>
+      <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
         <div className={styles.logo}>
           <Shield size={28} className={styles.logoIcon} />
           <span className={styles.logoText}>AML<span className={styles.logoAccent}>Resolution</span></span>
@@ -28,18 +37,18 @@ export function Layout() {
               `${styles.navLink} ${isActive ? styles.active : ''}`
             }
           >
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
+            <FileSearch size={20} />
+            <span>Casos Pendentes</span>
           </NavLink>
           
           <NavLink 
-            to="/cases" 
+            to="/dashboard" 
             className={({ isActive }) => 
               `${styles.navLink} ${isActive ? styles.active : ''}`
             }
           >
-            <FileSearch size={20} />
-            <span>Casos Pendentes</span>
+            <LayoutDashboard size={20} />
+            <span>Dashboard</span>
           </NavLink>
         </nav>
         

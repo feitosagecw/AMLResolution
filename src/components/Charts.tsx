@@ -104,6 +104,82 @@ export function DonutChart({ title, data }: DonutChartProps) {
   )
 }
 
+// Gráfico de Linha
+interface LineChartData {
+  date: string
+  value: number
+}
+
+interface LineChartProps {
+  title: string
+  data: LineChartData[]
+}
+
+export function LineChart({ title, data }: LineChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className={styles.chartCard}>
+        <h3 className={styles.chartTitle}>{title}</h3>
+        <div className={styles.emptyChart}>Sem dados disponíveis</div>
+      </div>
+    )
+  }
+
+  const values = data.map(d => d.value)
+  const total = values.reduce((acc, v) => acc + v, 0)
+  const avg = Math.round(total / data.length)
+  const maxValue = Math.max(...values)
+  const minValue = Math.min(...values)
+
+  return (
+    <div className={styles.lineChartCard}>
+      <div className={styles.lineChartHeader}>
+        <h3 className={styles.chartTitle}>{title}</h3>
+        <div className={styles.lineChartStats}>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>{total}</span>
+            <span className={styles.statLabel}>Total</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>{avg}</span>
+            <span className={styles.statLabel}>Média</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>{maxValue}</span>
+            <span className={styles.statLabel}>Máx</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>{minValue}</span>
+            <span className={styles.statLabel}>Mín</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className={styles.lineChartContainer}>
+        {data.map((item, index) => {
+          const barHeight = maxValue > 0 ? (item.value / maxValue) * 100 : 0
+          const isMax = item.value === maxValue
+          const isMin = item.value === minValue && minValue !== maxValue
+          
+          return (
+            <div key={index} className={styles.lineBarWrapper}>
+              <div className={styles.lineBarContainer}>
+                <div 
+                  className={`${styles.lineBar} ${isMax ? styles.lineBarMax : ''} ${isMin ? styles.lineBarMin : ''}`}
+                  style={{ height: `${Math.max(barHeight, 5)}%` }}
+                >
+                  <span className={styles.lineBarValue}>{item.value}</span>
+                </div>
+              </div>
+              <span className={styles.lineBarLabel}>{item.date}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 interface StatsByStatusProps {
   title: string
   data: { status: string; count: number }[]

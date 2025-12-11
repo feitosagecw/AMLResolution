@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { executeQuery } from '../config/bigquery.js';
-import { PENDING_CASES_QUERY, CASE_BY_USER_ID_QUERY, USER_INFO_QUERY } from '../queries/index.js';
+import { PENDING_CASES_QUERY, CASE_BY_USER_ID_QUERY, USER_INFO_QUERY, OFFENSE_HISTORY_QUERY } from '../queries/index.js';
 
 export const casesRouter = Router();
 
@@ -403,6 +403,85 @@ casesRouter.get('/:userId/user-info', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch user info',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// ============================================
+// HISTÓRICO DE OFFENSES
+// ============================================
+
+interface OffenseHistoryRow {
+  data_offense: { value: string } | string;
+  data_offense_original: string | null;
+  conclusion: string | null;
+  priority: string | null;
+  description: string | null;
+  analyst: string | null;
+  offense_name: string | null;
+}
+
+interface OffenseHistoryResponse {
+  data_offense: string;
+  conclusion: string | null;
+  priority: string | null;
+  description: string | null;
+  analyst: string | null;
+  offense_name: string | null;
+}
+
+function transformOffenseHistory(row: OffenseHistoryRow): OffenseHistoryResponse {
+  // Extrai a data padronizada (formato YYYY-MM-DD)
+  const dateStr = typeof row.data_offense === 'object' && row.data_offense?.value 
+    ? row.data_offense.value 
+    : String(row.data_offense || '');
+    
+  return {
+    data_offense: dateStr,
+    conclusion: row.conclusion,
+    priority: row.priority,
+    description: row.description,
+    analyst: row.analyst,
+    offense_name: row.offense_name
+  };
+}
+
+/**
+ * GET /api/cases/:userId/offense-history
+ * Retorna histórico de offenses do usuário
+ */
+casesRouter.get('/:userId/offense-history', async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId, 10);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid user_id'
+      });
+    }
+
+    console.log(`📜 Fetching offense history for ${userId}...`);
+    const startTime = Date.now();
+    
+    const rows = await executeQuery<OffenseHistoryRow>(OFFENSE_HISTORY_QUERY, { userId });
+    
+    const duration = Date.now() - startTime;
+    console.log(`✅ Offense history query completed in ${duration}ms - ${rows.length} records`);
+
+    const history = rows.map(transformOffenseHistory);
+    
+    res.json({
+      success: true,
+      data: history,
+      count: history.length
+    });
+  } catch (error) {
+    console.error('Error fetching offense history:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch offense history',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }

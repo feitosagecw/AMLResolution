@@ -240,6 +240,143 @@
   box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
 }
 
+/* Histórico de Offenses */
+.offenseHistorySection {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.offenseHistorySection h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1rem;
+  margin-bottom: var(--space-md);
+}
+
+.offenseHistoryCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.offenseHistoryTable {
+  overflow-x: auto;
+}
+
+.offenseHistoryTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.offenseHistoryTable th,
+.offenseHistoryTable td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.offenseHistoryTable th {
+  background: var(--bg-tertiary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.offenseHistoryTable tr:last-child td {
+  border-bottom: none;
+}
+
+.offenseHistoryTable tr:hover {
+  background: var(--bg-hover);
+}
+
+.offenseBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+.offenseBadge.moneyLaundering {
+  background: rgba(255, 68, 102, 0.1);
+  color: var(--accent-danger);
+  border: 1px solid rgba(255, 68, 102, 0.2);
+}
+
+.conclusionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.conclusionBadge.suspicious {
+  background: rgba(255, 68, 102, 0.15);
+  color: var(--accent-danger);
+}
+
+.conclusionBadge.normal {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--accent-primary);
+}
+
+.priorityBadge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.priorityBadge.low {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--accent-primary);
+}
+
+.priorityBadge.mid {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--accent-warning);
+}
+
+.priorityBadge.high {
+  background: rgba(255, 68, 102, 0.15);
+  color: var(--accent-danger);
+}
+
+.analystCell {
+  color: var(--text-secondary);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descriptionCell {
+  color: var(--text-muted);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+
 /* Sidebar / Resolution Form */
 .sidebar {
   position: sticky;
@@ -307,24 +444,36 @@
   border-color: var(--border-default);
 }
 
-.resolutionOption.normalize:hover,
+.resolutionOption.normalize:hover {
+  border-color: var(--accent-primary);
+  background: rgba(0, 255, 136, 0.1);
+}
+
 .resolutionOption.normalize.selected {
   border-color: var(--accent-primary);
-  background: rgba(0, 255, 136, 0.05);
+  background: var(--accent-primary);
 }
 
+.resolutionOption.normalize.selected span,
+.resolutionOption.normalize.selected small,
 .resolutionOption.normalize.selected svg {
-  color: var(--accent-primary);
+  color: #000 !important;
 }
 
-.resolutionOption.suspicious:hover,
+.resolutionOption.suspicious:hover {
+  border-color: var(--accent-warning);
+  background: rgba(255, 170, 0, 0.1);
+}
+
 .resolutionOption.suspicious.selected {
   border-color: var(--accent-warning);
-  background: rgba(255, 170, 0, 0.05);
+  background: var(--accent-warning);
 }
 
+.resolutionOption.suspicious.selected span,
+.resolutionOption.suspicious.selected small,
 .resolutionOption.suspicious.selected svg {
-  color: var(--accent-warning);
+  color: #000 !important;
 }
 
 /* Priority Options */
@@ -355,6 +504,7 @@
   font-weight: 700;
   font-size: 0.875rem;
   letter-spacing: 0.5px;
+  color: var(--text-primary);
 }
 
 .priorityDesc {
@@ -363,36 +513,51 @@
 }
 
 /* Priority - Low */
-.priorityOption.low:hover,
-.priorityOption.low.selected {
+.priorityOption.low:hover {
   border-color: var(--accent-primary);
-  background: rgba(0, 255, 136, 0.05);
+  background: rgba(0, 255, 136, 0.1);
 }
 
-.priorityOption.low.selected .priorityLabel {
-  color: var(--accent-primary);
+.priorityOption.low.selected {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary);
+}
+
+.priorityOption.low.selected .priorityLabel,
+.priorityOption.low.selected .priorityDesc {
+  color: #000 !important;
 }
 
 /* Priority - Mid */
-.priorityOption.mid:hover,
-.priorityOption.mid.selected {
+.priorityOption.mid:hover {
   border-color: var(--accent-warning);
-  background: rgba(255, 170, 0, 0.05);
+  background: rgba(255, 170, 0, 0.1);
 }
 
-.priorityOption.mid.selected .priorityLabel {
-  color: var(--accent-warning);
+.priorityOption.mid.selected {
+  border-color: var(--accent-warning);
+  background: var(--accent-warning);
+}
+
+.priorityOption.mid.selected .priorityLabel,
+.priorityOption.mid.selected .priorityDesc {
+  color: #000 !important;
 }
 
 /* Priority - High */
-.priorityOption.high:hover,
-.priorityOption.high.selected {
+.priorityOption.high:hover {
   border-color: var(--accent-danger);
-  background: rgba(255, 68, 102, 0.05);
+  background: rgba(255, 68, 102, 0.1);
 }
 
-.priorityOption.high.selected .priorityLabel {
-  color: var(--accent-danger);
+.priorityOption.high.selected {
+  border-color: var(--accent-danger);
+  background: var(--accent-danger);
+}
+
+.priorityOption.high.selected .priorityLabel,
+.priorityOption.high.selected .priorityDesc {
+  color: #000 !important;
 }
 
 /* Messages */

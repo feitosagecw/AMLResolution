@@ -18,9 +18,10 @@ import {
   Mail,
   MapPin,
   FileText,
-  CreditCard
+  CreditCard,
+  History
 } from 'lucide-react'
-import { useCaseDetail, useUserInfo } from '../hooks/useCases'
+import { useCaseDetail, useUserInfo, useOffenseHistory } from '../hooks/useCases'
 import { useCasesContext } from '../contexts/CasesContext'
 import { sendResolution } from '../services/casesService'
 import type { ResolutionType, ResolutionPriority } from '../types/case'
@@ -34,6 +35,7 @@ export function CaseDetail() {
   const userIdNumber = userId ? parseInt(userId, 10) : undefined
   const { caseData, loading, error } = useCaseDetail(userIdNumber)
   const { userInfo, loading: userInfoLoading, error: userInfoError, refetch: refetchUserInfo } = useUserInfo(userIdNumber)
+  const { history: offenseHistory, loading: historyLoading, error: historyError, refetch: refetchHistory } = useOffenseHistory(userIdNumber)
   const { removeCase } = useCasesContext()
   
   const [resolutionType, setResolutionType] = useState<ResolutionType | null>(null)
@@ -48,6 +50,27 @@ export function CaseDetail() {
     normalize: ['low', 'mid', 'high'],
     suspicious: ['mid', 'high']
   }
+
+  // Função helper para formatar data com segurança
+  const safeFormatDate = (dateStr: string | null | undefined, formatStr: string): string => {
+    if (!dateStr) return '-';
+    try {
+      // Se a data estiver no formato YYYY-MM-DD (ISO), parseia corretamente
+      let date: Date;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        // Formato YYYY-MM-DD
+        const [year, month, day] = dateStr.split('-').map(Number);
+        date = new Date(year, month - 1, day);
+      } else {
+        date = new Date(dateStr);
+      }
+      
+      if (isNaN(date.getTime())) return dateStr; // Retorna string original se não conseguir parsear
+      return format(date, formatStr, { locale: ptBR });
+    } catch {
+      return dateStr; // Retorna string original em caso de erro
+    }
+  };
 
   const handleTypeSelect = (type: ResolutionType) => {
     setResolutionType(type)
@@ -187,34 +210,6 @@ export function CaseDetail() {
             </div>
           </div>
 
-          {/* Status atual - baseado no userInfo */}
-          <div className={styles.statusSection}>
-            <h3>Status do Usuário</h3>
-            <div className={styles.statusCard}>
-              {userInfoLoading ? (
-                <div className={styles.userInfoLoading}>
-                  <RefreshCw size={16} className={styles.spinnerSmall} />
-                  Carregando status...
-                </div>
-              ) : userInfo ? (
-                <>
-                  <span className={clsx(styles.statusBadge, styles[userInfo.status || 'pending'])}>
-                    {userInfo.status || 'Desconhecido'}
-                  </span>
-                  {userInfo.status_reason && (
-                    <p>
-                      <strong>Motivo:</strong> {userInfo.status_reason}
-                    </p>
-                  )}
-                </>
-              ) : (
-                <span className={clsx(styles.statusBadge, styles.pending)}>
-                  Não disponível
-                </span>
-              )}
-            </div>
-          </div>
-
           {/* Informações do Usuário */}
           <div className={styles.userInfoSection}>
             <h3>
@@ -245,7 +240,7 @@ export function CaseDetail() {
                     </div>
                     <div className={styles.userMainInfo}>
                       <h4>{userInfo.nome || 'Nome não disponível'}</h4>
-                      <div>
+                      <div className={styles.userBadges}>
                         <span className={clsx(
                           styles.userRoleBadge,
                           userInfo.role_type.includes('Merchant') && styles.merchant,
@@ -262,6 +257,7 @@ export function CaseDetail() {
                             styles[userInfo.status]
                           )}>
                             {userInfo.status}
+                            {userInfo.status_reason && ` - ${userInfo.status_reason}`}
                           </span>
                         )}
                       </div>
@@ -334,15 +330,6 @@ export function CaseDetail() {
                       </div>
                     )}
 
-                    {userInfo.status_reason && (
-                      <div className={clsx(styles.userInfoItem, styles.full)}>
-                        <span className={styles.userInfoItemLabel}>Motivo do Status</span>
-                        <span className={clsx(styles.userInfoItemValue, styles.muted)}>
-                          {userInfo.status_reason}
-                        </span>
-                      </div>
-                    )}
-
                     <div className={styles.userInfoItem}>
                       <span className={styles.userInfoItemLabel}>
                         <Calendar size={10} /> Criado em (Merchant)
@@ -369,6 +356,67 @@ export function CaseDetail() {
               ) : (
                 <div className={styles.userInfoLoading}>
                   Nenhuma informação disponível
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Histórico de Offenses */}
+          <div className={styles.offenseHistorySection}>
+            <h3>
+              <History size={18} />
+              Histórico de Offenses
+              <button className={styles.refreshUserBtn} onClick={refetchHistory} disabled={historyLoading}>
+                <RefreshCw size={12} className={historyLoading ? styles.spinnerSmall : ''} />
+                Atualizar
+              </button>
+            </h3>
+
+            <div className={styles.offenseHistoryCard}>
+              {historyLoading ? (
+                <div className={styles.userInfoLoading}>
+                  <RefreshCw size={16} className={styles.spinnerSmall} />
+                  Carregando histórico...
+                </div>
+              ) : historyError ? (
+                <div className={styles.userInfoError}>
+                  <AlertTriangle size={16} />
+                  {historyError}
+                </div>
+              ) : offenseHistory.length > 0 ? (
+                <div className={styles.offenseHistoryTable}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Offense</th>
+                        <th>Conclusão</th>
+                        <th>Prioridade</th>
+                        <th>Analista</th>
+                        <th>Descrição</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {offenseHistory.map((offense, index) => (
+                        <tr key={index}>
+                          <td className={styles.mono}>
+                            {safeFormatDate(offense.data_offense, "dd/MM/yyyy")}
+                          </td>
+                          <td>{offense.offense_name || '-'}</td>
+                          <td>{offense.conclusion || '-'}</td>
+                          <td>{offense.priority || '-'}</td>
+                          <td className={styles.analystCell}>{offense.analyst || '-'}</td>
+                          <td className={styles.descriptionCell} title={offense.description || ''}>
+                            {offense.description || '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className={styles.userInfoLoading}>
+                  Nenhum histórico de offenses encontrado
                 </div>
               )}
             </div>

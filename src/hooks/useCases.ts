@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AMLCase, CaseStats, UserInfo } from '../types/case';
-import { fetchCases, fetchCaseStats, fetchCaseByUserId, fetchUserInfo } from '../services/casesService';
+import { fetchCases, fetchCaseStats, fetchCaseByUserId, fetchUserInfo, fetchOffenseHistory, type OffenseHistory } from '../services/casesService';
 
 interface UseCasesResult {
   cases: AMLCase[];
@@ -27,6 +27,13 @@ interface UseCaseDetailResult {
 
 interface UseUserInfoResult {
   userInfo: UserInfo | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+interface UseOffenseHistoryResult {
+  history: OffenseHistory[];
   loading: boolean;
   error: string | null;
   refetch: () => void;
@@ -179,4 +186,43 @@ export function useUserInfo(userId: number | undefined): UseUserInfoResult {
   }, [loadUserInfo]);
 
   return { userInfo, loading, error, refetch };
+}
+
+/**
+ * Hook para buscar histórico de offenses do usuário
+ */
+export function useOffenseHistory(userId: number | undefined): UseOffenseHistoryResult {
+  const [history, setHistory] = useState<OffenseHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadHistory = useCallback(async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await fetchOffenseHistory(userId);
+      setHistory(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Falha ao carregar histórico de offenses');
+      setHistory([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
+
+  const refetch = useCallback(() => {
+    loadHistory();
+  }, [loadHistory]);
+
+  return { history, loading, error, refetch };
 }

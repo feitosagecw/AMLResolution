@@ -61,6 +61,27 @@ export async function fetchUserInfo(userId: number): Promise<UserInfo> {
 }
 
 // ============================================
+// HISTÓRICO DE OFFENSES
+// ============================================
+
+export interface OffenseHistory {
+  data_offense: string;
+  conclusion: string | null;
+  priority: string | null;
+  description: string | null;
+  analyst: string | null;
+  offense_name: string | null;
+}
+
+/**
+ * Busca histórico de offenses do usuário
+ */
+export async function fetchOffenseHistory(userId: number): Promise<OffenseHistory[]> {
+  const result = await api.get<OffenseHistory[]>(`/cases/${userId}/offense-history`);
+  return result.data;
+}
+
+// ============================================
 // RESOLUÇÃO DE CASOS
 // ============================================
 

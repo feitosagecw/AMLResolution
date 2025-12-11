@@ -15,6 +15,43 @@
   left: 0;
   height: 100vh;
   z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.sidebarCollapsed {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
+.toggleBtn {
+  position: fixed;
+  top: var(--space-lg);
+  left: 220px;
+  z-index: 102;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.toggleBtn:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.collapsed .toggleBtn {
+  left: var(--space-md);
 }
 
 .logo {
@@ -138,6 +175,11 @@
   margin-left: 260px;
   padding: var(--space-xl);
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.collapsed .main {
+  margin-left: 0;
 }
 
 

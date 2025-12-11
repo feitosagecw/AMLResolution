@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { StatCard } from '../components/StatCard'
 import { CaseTable } from '../components/CaseTable'
-import { BarChart, DonutChart, StatusChart } from '../components/Charts'
+import { BarChart, DonutChart, StatusChart, LineChart } from '../components/Charts'
 import { useCasesContext } from '../contexts/CasesContext'
 import styles from './Dashboard.module.css'
 
@@ -62,6 +62,31 @@ export function Dashboard() {
       counts[c.status] = (counts[c.status] || 0) + 1
     })
     return Object.entries(counts).map(([status, count]) => ({ status, count }))
+  }, [cases])
+
+  // Dados para gráfico de linha (alertas por data)
+  const alertsByDateData = useMemo(() => {
+    const counts: Record<string, number> = {}
+    cases.forEach(c => {
+      // Extrair apenas a data (sem hora)
+      const date = c.created_at ? c.created_at.split('T')[0] : null
+      if (date) {
+        counts[date] = (counts[date] || 0) + 1
+      }
+    })
+    
+    // Ordenar por data e pegar os últimos 15 dias com dados
+    return Object.entries(counts)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-15)
+      .map(([date, value]) => {
+        // Formatar data para exibição (DD/MM)
+        const [year, month, day] = date.split('-')
+        return {
+          date: `${day}/${month}`,
+          value
+        }
+      })
   }, [cases])
 
   const recentCases = useMemo(() => cases.slice(0, 5), [cases])
@@ -115,7 +140,7 @@ export function Dashboard() {
               <RefreshCw size={18} className={loading ? styles.spinning : ''} />
               Atualizar
             </button>
-            <Link to="/cases" className={styles.viewAllBtn}>
+            <Link to="/" className={styles.viewAllBtn}>
               <FileSearch size={18} />
               Ver Todos os Casos
               <ArrowRight size={16} />
@@ -129,18 +154,6 @@ export function Dashboard() {
             value={loading ? '...' : stats?.total ?? 0}
             icon={<AlertTriangle size={20} />}
             variant="info"
-          />
-          <StatCard
-            title="Pendentes"
-            value={loading ? '...' : stats?.pending ?? 0}
-            icon={<Clock size={20} />}
-            variant="warning"
-          />
-          <StatCard
-            title="Resolvidos"
-            value={loading ? '...' : stats?.resolved ?? 0}
-            icon={<CheckCircle2 size={20} />}
-            variant="success"
           />
           <StatCard
             title="Alto Valor"
@@ -169,6 +182,16 @@ export function Dashboard() {
           </div>
         )}
 
+        {/* Gráfico de Linha - Alertas por Data */}
+        {cases.length > 0 && alertsByDateData.length > 0 && (
+          <div className={styles.lineChartSection}>
+            <LineChart 
+              title="📈 Alertas por Data de Criação" 
+              data={alertsByDateData}
+            />
+          </div>
+        )}
+
         <div className={styles.sections}>
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -184,7 +207,7 @@ export function Dashboard() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2>📋 Casos Recentes</h2>
-              <Link to="/cases" className={styles.sectionLink}>
+              <Link to="/" className={styles.sectionLink}>
                 Ver todos <ArrowRight size={14} />
               </Link>
             </div>

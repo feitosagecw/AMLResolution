@@ -48,8 +48,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Dashboard />} />
-        <Route path="cases" element={<CaseList />} />
+        <Route index element={<CaseList />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="cases/:userId" element={<CaseDetail />} />
       </Route>
     </Routes>

@@ -125,6 +125,10 @@
   margin-bottom: var(--space-xl);
 }
 
+.lineChartSection {
+  margin-bottom: var(--space-xl);
+}
+
 .chartsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

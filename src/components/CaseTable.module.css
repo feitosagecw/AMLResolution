@@ -167,8 +167,16 @@
 }
 
 .normalValue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
-  color: var(--text-muted);
+  font-weight: 500;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.05));
+  color: var(--accent-secondary);
+  border: 1px solid rgba(0, 212, 255, 0.2);
 }
 
 .actionBtn {
