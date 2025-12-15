@@ -87,7 +87,7 @@ export async function fetchOffenseHistory(userId: number): Promise<OffenseHistor
 
 export interface ResolutionPayload {
   user_id: number;
-  conclusion: 'normal' | 'suspicious';
+  conclusion: 'normal' | 'suspicious' | 'offense';
   priority: ResolutionPriority;
   description: string;
 }

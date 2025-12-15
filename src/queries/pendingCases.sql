@@ -82,3 +82,5 @@ LEFT JOIN TransactionSums90 ts90 ON ts90.user_id = su.user_id
 ORDER BY su.created_at DESC;
 
 
+
+

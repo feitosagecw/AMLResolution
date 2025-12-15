@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   AlertTriangle, 
@@ -17,6 +17,7 @@ import styles from './Dashboard.module.css'
 
 export function Dashboard() {
   const { cases, loading, error, cached, cacheAge, refresh } = useCasesContext()
+  const [selectedAlert, setSelectedAlert] = useState<string | null>(null)
 
   const stats = useMemo(() => {
     if (cases.length === 0) return null
@@ -56,10 +57,15 @@ export function Dashboard() {
   }, [cases])
 
 
-  // Dados para gráfico de linha (alertas por data)
+  // Dados para gráfico de linha (alertas por data) - filtrável por alerta selecionado
   const alertsByDateData = useMemo(() => {
+    // Filtrar casos pelo alerta selecionado (analyst)
+    const filteredCases = selectedAlert 
+      ? cases.filter(c => c.analyst === selectedAlert)
+      : cases
+    
     const counts: Record<string, number> = {}
-    cases.forEach(c => {
+    filteredCases.forEach(c => {
       // Extrair apenas a data (sem hora)
       const date = c.created_at ? c.created_at.split('T')[0] : null
       if (date) {
@@ -73,13 +79,13 @@ export function Dashboard() {
       .slice(-15)
       .map(([date, value]) => {
         // Formatar data para exibição (DD/MM)
-        const [year, month, day] = date.split('-')
+        const [, month, day] = date.split('-')
         return {
           date: `${day}/${month}`,
           value
         }
       })
-  }, [cases])
+  }, [cases, selectedAlert])
 
   const recentCases = useMemo(() => cases.slice(0, 5), [cases])
   
@@ -162,6 +168,8 @@ export function Dashboard() {
               title="📊 Casos por Alerta" 
               data={analystData}
               maxItems={8}
+              selectedLabel={selectedAlert}
+              onSelect={setSelectedAlert}
             />
             <DonutChart 
               title="💰 Distribuição por Valor" 
@@ -171,11 +179,12 @@ export function Dashboard() {
         )}
 
         {/* Gráfico de Linha - Alertas por Data */}
-        {cases.length > 0 && alertsByDateData.length > 0 && (
+        {cases.length > 0 && (
           <div className={styles.lineChartSection}>
             <LineChart 
               title="📈 Alertas por Data de Criação" 
               data={alertsByDateData}
+              filterLabel={selectedAlert}
             />
           </div>
         )}

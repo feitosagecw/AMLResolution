@@ -1,24 +1,60 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { FileSearch, AlertTriangle, RefreshCw, Clock } from 'lucide-react'
 import { SearchFilters } from '../components/SearchFilters'
 import { CaseTable } from '../components/CaseTable'
 import { useCasesContext } from '../contexts/CasesContext'
 import { getUniqueAnalysts } from '../services/casesService'
-import type { CaseFilters } from '../types/case'
+import type { CaseFilters, UserStatus, HighValue, SortField, SortOrder } from '../types/case'
 import styles from './CaseList.module.css'
+
+// Valores padrão dos filtros
+const defaultFilters: CaseFilters = {
+  search: '',
+  status: 'all',
+  high_value: 'all',
+  analyst: 'all',
+  days_range: null,
+  sortBy: 'days_since_creation',
+  sortOrder: 'desc'
+}
+
+// Funções para converter filtros para/da URL
+function filtersToParams(filters: CaseFilters): URLSearchParams {
+  const params = new URLSearchParams()
+  if (filters.search) params.set('search', filters.search)
+  if (filters.status !== 'all') params.set('status', filters.status)
+  if (filters.high_value !== 'all') params.set('high_value', filters.high_value)
+  if (filters.analyst !== 'all') params.set('analyst', filters.analyst)
+  if (filters.sortBy !== 'days_since_creation') params.set('sortBy', filters.sortBy)
+  if (filters.sortOrder !== 'desc') params.set('sortOrder', filters.sortOrder)
+  return params
+}
+
+function paramsToFilters(params: URLSearchParams): CaseFilters {
+  return {
+    search: params.get('search') || '',
+    status: (params.get('status') as UserStatus) || 'all',
+    high_value: (params.get('high_value') as HighValue) || 'all',
+    analyst: params.get('analyst') || 'all',
+    days_range: null,
+    sortBy: (params.get('sortBy') as SortField) || 'days_since_creation',
+    sortOrder: (params.get('sortOrder') as SortOrder) || 'desc'
+  }
+}
 
 export function CaseList() {
   const { cases, loading, error, cached, cacheAge, refresh } = useCasesContext()
+  const [searchParams, setSearchParams] = useSearchParams()
   
-  const [filters, setFilters] = useState<CaseFilters>({
-    search: '',
-    status: 'all',
-    high_value: 'all',
-    analyst: 'all',
-    days_range: null,
-    sortBy: 'days_since_creation',
-    sortOrder: 'desc'
-  })
+  // Inicializa filtros a partir da URL
+  const [filters, setFilters] = useState<CaseFilters>(() => paramsToFilters(searchParams))
+  
+  // Sincroniza filtros com a URL quando mudarem
+  const handleFiltersChange = useCallback((newFilters: CaseFilters) => {
+    setFilters(newFilters)
+    setSearchParams(filtersToParams(newFilters), { replace: true })
+  }, [setSearchParams])
 
   const analysts = useMemo(() => getUniqueAnalysts(cases), [cases])
 
@@ -129,7 +165,7 @@ export function CaseList() {
 
         <SearchFilters 
           filters={filters} 
-          onFiltersChange={setFilters}
+          onFiltersChange={handleFiltersChange}
           analysts={analysts}
         />
 

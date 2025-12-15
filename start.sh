@@ -149,3 +149,5 @@ echo -e "${BLUE}📜 Mostrando logs (Ctrl+C para parar)...${NC}"
 echo ""
 tail -f "$LOGS_DIR/backend.log" "$LOGS_DIR/frontend.log"
 
+
+

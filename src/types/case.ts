@@ -5,7 +5,7 @@ export type UserStatus =
   | 'suspended' 
   | 'inactive';
 
-export type ResolutionType = 'normalize' | 'suspicious';
+export type ResolutionType = 'normalize' | 'suspicious' | 'descredenciar';
 
 export type ResolutionPriority = 'low' | 'mid' | 'high';
 

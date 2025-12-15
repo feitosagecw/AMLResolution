@@ -476,6 +476,22 @@
   color: #000 !important;
 }
 
+.resolutionOption.descredenciar:hover {
+  border-color: var(--accent-danger);
+  background: rgba(255, 68, 102, 0.1);
+}
+
+.resolutionOption.descredenciar.selected {
+  border-color: var(--accent-danger);
+  background: var(--accent-danger);
+}
+
+.resolutionOption.descredenciar.selected span,
+.resolutionOption.descredenciar.selected small,
+.resolutionOption.descredenciar.selected svg {
+  color: #fff !important;
+}
+
 /* Priority Options */
 .priorityOptions {
   display: flex;
@@ -798,7 +814,9 @@
 }
 
 .userInfoItemLabel {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -838,6 +856,10 @@
   color: var(--accent-danger);
   text-align: center;
   font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
 }
 
 .userStatusBadge {

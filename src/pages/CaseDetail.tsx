@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { 
@@ -31,6 +31,14 @@ import clsx from 'clsx'
 export function CaseDetail() {
   const { userId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Preserva os filtros da URL de origem (ex: /cases?status=blocked)
+  const getReturnPath = () => {
+    // Pega os query params do referrer ou do state, se existirem
+    const searchParams = location.state?.fromFilters || ''
+    return `/cases${searchParams ? `?${searchParams}` : ''}`
+  }
   
   const userIdNumber = userId ? parseInt(userId, 10) : undefined
   const { caseData, loading, error } = useCaseDetail(userIdNumber)
@@ -48,7 +56,8 @@ export function CaseDetail() {
   // Prioridades disponíveis por tipo de resolução
   const availablePriorities: Record<ResolutionType, ResolutionPriority[]> = {
     normalize: ['low', 'mid', 'high'],
-    suspicious: ['mid', 'high']
+    suspicious: ['mid', 'high'],
+    descredenciar: ['low', 'mid', 'high']
   }
 
   // Função helper para formatar data com segurança
@@ -93,7 +102,7 @@ export function CaseDetail() {
         <AlertTriangle size={48} />
         <h2>Caso não encontrado</h2>
         <p>{error || `O caso com ID ${userId} não foi encontrado no sistema.`}</p>
-        <Link to="/cases" className={styles.backLink}>
+        <Link to={getReturnPath()} className={styles.backLink}>
           <ArrowLeft size={18} />
           Voltar para lista
         </Link>
@@ -110,7 +119,12 @@ export function CaseDetail() {
     
     try {
       // Mapear tipo de resolução para conclusion da API
-      const conclusion = resolutionType === 'normalize' ? 'normal' : 'suspicious';
+      const conclusionMap: Record<ResolutionType, 'normal' | 'suspicious' | 'offense'> = {
+        normalize: 'normal',
+        suspicious: 'suspicious',
+        descredenciar: 'offense'
+      };
+      const conclusion = conclusionMap[resolutionType];
       
       const response = await sendResolution({
         user_id: caseData.user_id,
@@ -123,9 +137,9 @@ export function CaseDetail() {
         setSubmitSuccess(true)
         // Remove o caso do cache do frontend também
         removeCase(caseData.user_id)
-        // Aguardar um pouco para mostrar a mensagem de sucesso
+        // Aguardar um pouco para mostrar a mensagem de sucesso e voltar com filtros preservados
         setTimeout(() => {
-          navigate('/cases')
+          navigate(getReturnPath())
         }, 1500)
       } else {
         setSubmitError(response.error || 'Erro ao enviar resolução')
@@ -501,6 +515,20 @@ export function CaseDetail() {
                     <AlertTriangle size={20} />
                     <span>Suspeito</span>
                     <small>Confirmar suspeita de lavagem</small>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className={clsx(
+                      styles.resolutionOption,
+                      resolutionType === 'descredenciar' && styles.selected,
+                      styles.descredenciar
+                    )}
+                    onClick={() => handleTypeSelect('descredenciar')}
+                  >
+                    <XCircle size={20} />
+                    <span>Descredenciar</span>
+                    <small>Remover credenciamento</small>
                   </button>
                 </div>
               </div>

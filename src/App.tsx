@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { CasesProvider } from './contexts/CasesContext'
 import { Layout } from './components/Layout'
+import { GCloudAlert } from './components/GCloudAlert'
 import { Login } from './pages/Login'
 import { Dashboard } from './pages/Dashboard'
 import { CaseList } from './pages/CaseList'
@@ -61,6 +62,7 @@ function App() {
   return (
     <AuthProvider>
       <CasesProvider>
+        <GCloudAlert />
         <AppRoutes />
       </CasesProvider>
     </AuthProvider>

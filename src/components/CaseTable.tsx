@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Eye, AlertTriangle, TrendingUp, ShieldAlert } from 'lucide-react'
@@ -13,6 +13,14 @@ interface CaseTableProps {
 
 export function CaseTable({ cases, loading }: CaseTableProps) {
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Função para navegar ao detalhe preservando os filtros atuais
+  const goToCase = (userId: number) => {
+    // Pega os query params atuais (filtros) da URL
+    const currentFilters = location.search.replace('?', '')
+    navigate(`/cases/${userId}`, { state: { fromFilters: currentFilters } })
+  }
 
   if (loading) {
     return (
@@ -105,7 +113,7 @@ export function CaseTable({ cases, loading }: CaseTableProps) {
               <td>
                 <button 
                   className={styles.actionBtn}
-                  onClick={() => navigate(`/cases/${caseItem.user_id}`)}
+                  onClick={() => goToCase(caseItem.user_id)}
                   title="Ver detalhes"
                 >
                   <Eye size={18} />

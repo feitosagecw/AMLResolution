@@ -10,33 +10,62 @@ interface BarChartProps {
   title: string
   data: BarChartData[]
   maxItems?: number
+  selectedLabel?: string | null
+  onSelect?: (label: string | null) => void
 }
 
-export function BarChart({ title, data, maxItems = 8 }: BarChartProps) {
+export function BarChart({ title, data, maxItems = 8, selectedLabel, onSelect }: BarChartProps) {
   const sortedData = [...data].sort((a, b) => b.value - a.value).slice(0, maxItems)
   const maxValue = Math.max(...sortedData.map(d => d.value), 1)
+  const isInteractive = !!onSelect
+
+  const handleClick = (label: string) => {
+    if (!onSelect) return
+    // Toggle: se já está selecionado, deseleciona
+    onSelect(selectedLabel === label ? null : label)
+  }
 
   return (
     <div className={styles.chartCard}>
-      <h3 className={styles.chartTitle}>{title}</h3>
+      <div className={styles.chartHeader}>
+        <h3 className={styles.chartTitle}>{title}</h3>
+        {selectedLabel && onSelect && (
+          <button className={styles.clearFilterBtn} onClick={() => onSelect(null)}>
+            ✕ Limpar filtro
+          </button>
+        )}
+      </div>
+      {isInteractive && (
+        <p className={styles.chartHint}>Clique em um alerta para filtrar o gráfico de linha</p>
+      )}
       <div className={styles.barChart}>
-        {sortedData.map((item, index) => (
-          <div key={item.label} className={styles.barRow}>
-            <span className={styles.barLabel} title={item.label}>
-              {item.label}
-            </span>
-            <div className={styles.barTrack}>
-              <div 
-                className={styles.barFill}
-                style={{ 
-                  width: `${(item.value / maxValue) * 100}%`,
-                  animationDelay: `${index * 50}ms`
-                }}
-              />
+        {sortedData.map((item, index) => {
+          const isSelected = selectedLabel === item.label
+          const isDimmed = selectedLabel && !isSelected
+          
+          return (
+            <div 
+              key={item.label} 
+              className={`${styles.barRow} ${isInteractive ? styles.barRowClickable : ''} ${isSelected ? styles.barRowSelected : ''} ${isDimmed ? styles.barRowDimmed : ''}`}
+              onClick={() => handleClick(item.label)}
+            >
+              <span className={styles.barLabel} title={item.label}>
+                {isSelected && <span className={styles.selectedIndicator}>●</span>}
+                {item.label}
+              </span>
+              <div className={styles.barTrack}>
+                <div 
+                  className={`${styles.barFill} ${isSelected ? styles.barFillSelected : ''}`}
+                  style={{ 
+                    width: `${(item.value / maxValue) * 100}%`,
+                    animationDelay: `${index * 50}ms`
+                  }}
+                />
+              </div>
+              <span className={styles.barValue}>{item.value}</span>
             </div>
-            <span className={styles.barValue}>{item.value}</span>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
@@ -113,14 +142,20 @@ interface LineChartData {
 interface LineChartProps {
   title: string
   data: LineChartData[]
+  filterLabel?: string | null
 }
 
-export function LineChart({ title, data }: LineChartProps) {
+export function LineChart({ title, data, filterLabel }: LineChartProps) {
   if (data.length === 0) {
     return (
       <div className={styles.chartCard}>
         <h3 className={styles.chartTitle}>{title}</h3>
-        <div className={styles.emptyChart}>Sem dados disponíveis</div>
+        <div className={styles.emptyChart}>
+          {filterLabel 
+            ? `Nenhum dado encontrado para "${filterLabel}"`
+            : 'Sem dados disponíveis'
+          }
+        </div>
       </div>
     )
   }
@@ -134,7 +169,14 @@ export function LineChart({ title, data }: LineChartProps) {
   return (
     <div className={styles.lineChartCard}>
       <div className={styles.lineChartHeader}>
-        <h3 className={styles.chartTitle}>{title}</h3>
+        <div className={styles.lineChartTitleArea}>
+          <h3 className={styles.chartTitle}>{title}</h3>
+          {filterLabel && (
+            <span className={styles.activeFilterBadge}>
+              Filtrando: <strong>{filterLabel}</strong>
+            </span>
+          )}
+        </div>
         <div className={styles.lineChartStats}>
           <div className={styles.statItem}>
             <span className={styles.statValue}>{total}</span>

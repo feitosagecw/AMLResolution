@@ -12,7 +12,7 @@ const RISK_API_URL = 'https://infinitepay-risk-api.services.production.cloudwalk
 
 interface ResolutionRequest {
   user_id: number;
-  conclusion: 'normal' | 'suspicious';
+  conclusion: 'normal' | 'suspicious' | 'offense';
   priority: 'low' | 'mid' | 'high';
   description: string;
 }
@@ -21,7 +21,7 @@ interface OffenseAnalysisPayload {
   user_id: number;
   description: string;
   analysis_type: 'manual';
-  conclusion: 'normal' | 'suspicious';
+  conclusion: 'normal' | 'suspicious' | 'offense';
   priority: 'low' | 'mid' | 'high';
   automatic_pipeline: boolean;
   offense_group: 'illegal_activity';
@@ -58,10 +58,10 @@ resolutionRouter.post('/', async (req, res) => {
       });
     }
 
-    if (!conclusion || !['normal', 'suspicious'].includes(conclusion)) {
+    if (!conclusion || !['normal', 'suspicious', 'offense'].includes(conclusion)) {
       return res.status(400).json({
         success: false,
-        error: 'conclusion must be "normal" or "suspicious"'
+        error: 'conclusion must be "normal", "suspicious", or "offense"'
       });
     }
 
@@ -80,7 +80,7 @@ resolutionRouter.post('/', async (req, res) => {
       });
     }
 
-    console.log(`📤 Sending resolution for user ${user_id}: ${conclusion} (${priority})`);
+    console.log(`📤 Sending resolution for user ${user_id}: ${conclusion} (priority: ${priority})`);
 
     // Obter token do gcloud
     const token = await getGCloudToken();
