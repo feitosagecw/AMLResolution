@@ -14,7 +14,7 @@ const execAsync = promisify(exec);
  * que tem acesso ao projeto infinitepay-monitoring
  */
 export const bigquery = new BigQuery({
-  projectId: 'infinitepay-monitoring',
+  projectId: 'infinitepay-production',
 });
 
 // Estado de autenticação

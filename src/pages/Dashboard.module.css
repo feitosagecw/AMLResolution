@@ -1,8 +1,9 @@
 .dashboard {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
   position: relative;
   z-index: 1;
+  animation: fadeIn var(--transition-base) forwards;
 }
 
 /* Background pattern igual ao da página de login */

@@ -167,7 +167,6 @@ export function Dashboard() {
             <BarChart 
               title="📊 Casos por Alerta" 
               data={analystData}
-              maxItems={8}
               selectedLabel={selectedAlert}
               onSelect={setSelectedAlert}
             />

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { AMLCase } from '../types/case';
 import { fetchCases as fetchCasesApi } from '../services/casesService';
 
@@ -25,12 +25,20 @@ export function CasesProvider({ children }: CasesProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [cached, setCached] = useState(false);
   const [cacheAge, setCacheAge] = useState(0);
-  const [lastFetch, setLastFetch] = useState<number>(0);
+  const lastFetchRef = useRef<number>(0);
+  const isInitializedRef = useRef(false);
+  const casesLengthRef = useRef<number>(0);
+
+  // Atualiza a ref quando cases muda
+  useEffect(() => {
+    casesLengthRef.current = cases.length;
+  }, [cases.length]);
 
   const loadCases = useCallback(async (forceRefresh = false) => {
     // Se temos dados e a última busca foi há menos de 30 segundos, não recarrega
     // (a menos que seja forceRefresh)
-    if (!forceRefresh && cases.length > 0 && Date.now() - lastFetch < 30000) {
+    const now = Date.now();
+    if (!forceRefresh && casesLengthRef.current > 0 && now - lastFetchRef.current < 30000) {
       console.log('📦 Using frontend cache');
       return;
     }
@@ -43,18 +51,29 @@ export function CasesProvider({ children }: CasesProviderProps) {
       setCases(result.cases);
       setCached(result.cached);
       setCacheAge(result.cacheAge);
-      setLastFetch(Date.now());
+      lastFetchRef.current = now;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load cases');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load cases';
+      setError(errorMessage);
+      console.error('Erro ao carregar casos:', err);
       // Não limpa os casos em caso de erro para manter os dados anteriores
     } finally {
       setLoading(false);
+      isInitializedRef.current = true;
     }
-  }, [cases.length, lastFetch]);
+  }, []);
 
   // Carrega os casos na inicialização
   useEffect(() => {
-    loadCases();
+    if (!isInitializedRef.current) {
+      loadCases().catch(err => {
+        console.error('Erro na inicialização do CasesContext:', err);
+        setError('Erro ao carregar casos iniciais');
+        setLoading(false);
+        isInitializedRef.current = true;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refetch sem forçar refresh
@@ -95,6 +114,10 @@ export function useCasesContext(): CasesContextType {
   }
   return context;
 }
+
+
+
+
 
 
 

@@ -18,6 +18,9 @@ export function GCloudAlert() {
     setChecking(true)
     try {
       const response = await fetch('http://localhost:3001/api/auth/status')
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
       const data = await response.json()
       setStatus(data)
       
@@ -26,6 +29,7 @@ export function GCloudAlert() {
         setDismissed(true)
       }
     } catch (error) {
+      console.error('Erro ao verificar status do GCloud:', error)
       setStatus({
         authenticated: false,
         message: 'Não foi possível conectar ao servidor backend'
@@ -142,6 +146,10 @@ export function GCloudAlert() {
     </div>
   )
 }
+
+
+
+
 
 
 

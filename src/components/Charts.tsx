@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styles from './Charts.module.css'
 
 interface BarChartData {
@@ -14,8 +15,20 @@ interface BarChartProps {
   onSelect?: (label: string | null) => void
 }
 
-export function BarChart({ title, data, maxItems = 8, selectedLabel, onSelect }: BarChartProps) {
-  const sortedData = [...data].sort((a, b) => b.value - a.value).slice(0, maxItems)
+const ITEMS_PER_PAGE = 7
+
+export function BarChart({ title, data, maxItems, selectedLabel, onSelect }: BarChartProps) {
+  const sortedData = maxItems !== undefined
+    ? [...data].sort((a, b) => b.value - a.value).slice(0, maxItems)
+    : [...data].sort((a, b) => b.value - a.value)
+  
+  const totalPages = Math.ceil(sortedData.length / ITEMS_PER_PAGE)
+  const [currentPage, setCurrentPage] = useState(0)
+  
+  const startIndex = currentPage * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentPageData = sortedData.slice(startIndex, endIndex)
+  
   const maxValue = Math.max(...sortedData.map(d => d.value), 1)
   const isInteractive = !!onSelect
 
@@ -23,6 +36,24 @@ export function BarChart({ title, data, maxItems = 8, selectedLabel, onSelect }:
     if (!onSelect) return
     // Toggle: se já está selecionado, deseleciona
     onSelect(selectedLabel === label ? null : label)
+  }
+
+  const goToPage = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page)
+    }
+  }
+
+  const goToPrevious = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  const goToNext = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1)
+    }
   }
 
   return (
@@ -39,7 +70,7 @@ export function BarChart({ title, data, maxItems = 8, selectedLabel, onSelect }:
         <p className={styles.chartHint}>Clique em um alerta para filtrar o gráfico de linha</p>
       )}
       <div className={styles.barChart}>
-        {sortedData.map((item, index) => {
+        {currentPageData.map((item, index) => {
           const isSelected = selectedLabel === item.label
           const isDimmed = selectedLabel && !isSelected
           
@@ -67,6 +98,37 @@ export function BarChart({ title, data, maxItems = 8, selectedLabel, onSelect }:
           )
         })}
       </div>
+      
+      {totalPages > 1 && (
+        <div className={styles.carouselControls}>
+          <button 
+            className={styles.carouselBtn}
+            onClick={goToPrevious}
+            disabled={currentPage === 0}
+            aria-label="Página anterior"
+          >
+            ‹
+          </button>
+          <div className={styles.carouselDots}>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                className={`${styles.carouselDot} ${currentPage === index ? styles.carouselDotActive : ''}`}
+                onClick={() => goToPage(index)}
+                aria-label={`Ir para página ${index + 1}`}
+              />
+            ))}
+          </div>
+          <button 
+            className={styles.carouselBtn}
+            onClick={goToNext}
+            disabled={currentPage === totalPages - 1}
+            aria-label="Próxima página"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </div>
   )
 }

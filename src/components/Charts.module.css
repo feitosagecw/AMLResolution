@@ -147,6 +147,75 @@
   min-width: 40px;
 }
 
+/* Carousel Controls */
+.carouselControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.carouselBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.carouselBtn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+.carouselBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carouselDots {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.carouselDot:hover {
+  background: rgba(0, 255, 136, 0.3);
+  transform: scale(1.2);
+}
+
+.carouselDotActive {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  width: 10px;
+  height: 10px;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
 /* Donut Chart */
 .donutContainer {
   display: flex;
